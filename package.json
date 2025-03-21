@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "prepare": "chmod +x ./src/index.js",
+    "prepare": "node -e \"if(process.platform !== 'win32') require('child_process').execSync('chmod +x ./src/index.js')\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
