@@ -1,12 +1,16 @@
 {
-  "name": "mcp-continuity-server",
+  "name": "@lucasdoreac/mcp-continuity-server",
   "version": "1.0.0",
   "description": "Um servidor MCP para gerenciamento de continuidade e estado em projetos",
   "main": "src/index.js",
   "type": "module",
+  "bin": {
+    "mcp-continuity-server": "./src/index.js"
+  },
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
+    "prepare": "chmod +x ./src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
