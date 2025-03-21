@@ -7,7 +7,6 @@ import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { MCPServer } from './mcp/server.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 
 // Configuração do ambiente
 dotenv.config();
@@ -17,7 +16,7 @@ const isMCPMode = process.argv.length <= 2;
 
 if (isMCPMode) {
   // Modo MCP - usar StdioServerTransport
-  console.log("Iniciando em modo MCP...");
+  console.error("Iniciando em modo MCP..."); // Use console.error para logs 
   
   // Inicializa o servidor MCP
   const mcpServer = new MCPServer();
@@ -30,7 +29,7 @@ if (isMCPMode) {
   
   // Tratamento de encerramento
   process.on('SIGINT', async () => {
-    console.log('Encerrando servidor MCP...');
+    console.error('Encerrando servidor MCP...');
     await mcpServer.stop();
     process.exit(0);
   });
