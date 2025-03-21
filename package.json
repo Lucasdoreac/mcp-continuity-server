@@ -1,0 +1,41 @@
+{
+  "name": "mcp-continuity-server",
+  "version": "1.0.0",
+  "description": "Um servidor MCP para gerenciamento de continuidade e estado em projetos",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lucasdoreac/mcp-continuity-server.git"
+  },
+  "keywords": [
+    "mcp",
+    "continuity",
+    "context",
+    "ai",
+    "development",
+    "server"
+  ],
+  "author": "Lucas Dórea Cardoso",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Lucasdoreac/mcp-continuity-server/issues"
+  },
+  "homepage": "https://github.com/Lucasdoreac/mcp-continuity-server#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "fs-extra": "^11.2.0",
+    "octokit": "^3.1.2",
+    "@modelcontextprotocol/mcp": "^0.2.14",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
