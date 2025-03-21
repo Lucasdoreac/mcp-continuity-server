@@ -1,4 +1,4 @@
-import { MCP } from '@modelcontextprotocol/mcp';
+import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StateManager } from '../services/stateManager.js';
 import { AutoSetup } from '../services/autoSetup.js';
 import { RepositoryTools } from '../services/repositoryTools.js';
@@ -6,10 +6,17 @@ import { RepositoryTools } from '../services/repositoryTools.js';
 export class MCPServer {
   constructor() {
     // Inicializa o servidor MCP
-    this.server = new MCP.Server({
-      name: 'MCP Continuity Server',
-      version: '1.0.0',
-    });
+    this.server = new Server(
+      {
+        name: 'MCP Continuity Server',
+        version: '1.0.0',
+      },
+      {
+        capabilities: {
+          tools: {},
+        },
+      }
+    );
 
     // Inicializa os serviços
     this.stateManager = new StateManager();
@@ -33,7 +40,7 @@ export class MCPServer {
     this.server.registerTool({
       name: 'initProjectState',
       description: 'Inicializa o estado de um projeto com base em um repositório',
-      parameters: {
+      inputSchema: {
         type: 'object',
         properties: {
           repositoryUrl: {
@@ -51,10 +58,13 @@ export class MCPServer {
         try {
           const { repositoryUrl, workingDirectory = '' } = params;
           const result = await this.autoSetup.setupProjectState(repositoryUrl, workingDirectory);
-          return { result };
+          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
         } catch (error) {
           console.error('Erro em initProjectState:', error);
-          return { error: error.message || 'Erro ao inicializar estado do projeto' };
+          return { 
+            content: [{ type: 'text', text: `Erro ao inicializar estado do projeto: ${error.message}` }],
+            isError: true
+          };
         }
       }
     });
@@ -64,7 +74,7 @@ export class MCPServer {
     this.server.registerTool({
       name: 'loadProjectState',
       description: 'Carrega o estado atual de um projeto',
-      parameters: {
+      inputSchema: {
         type: 'object',
         properties: {
           projectPath: {
@@ -77,10 +87,13 @@ export class MCPServer {
         try {
           const { projectPath = 'project-status.json' } = params;
           const result = await this.stateManager.loadProjectState(projectPath);
-          return { result };
+          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
         } catch (error) {
           console.error('Erro em loadProjectState:', error);
-          return { error: error.message || 'Erro ao carregar estado do projeto' };
+          return { 
+            content: [{ type: 'text', text: `Erro ao carregar estado do projeto: ${error.message}` }],
+            isError: true
+          };
         }
       }
     });
@@ -90,7 +103,7 @@ export class MCPServer {
     this.server.registerTool({
       name: 'updateProjectState',
       description: 'Atualiza campos específicos no estado do projeto',
-      parameters: {
+      inputSchema: {
         type: 'object',
         properties: {
           updates: {
@@ -108,10 +121,13 @@ export class MCPServer {
         try {
           const { updates, projectPath = 'project-status.json' } = params;
           const result = await this.stateManager.updateProjectState(updates, projectPath);
-          return { result };
+          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
         } catch (error) {
           console.error('Erro em updateProjectState:', error);
-          return { error: error.message || 'Erro ao atualizar estado do projeto' };
+          return { 
+            content: [{ type: 'text', text: `Erro ao atualizar estado do projeto: ${error.message}` }],
+            isError: true
+          };
         }
       }
     });
@@ -121,7 +137,7 @@ export class MCPServer {
     this.server.registerTool({
       name: 'analyzeRepository',
       description: 'Analisa a estrutura de um repositório para obter insights',
-      parameters: {
+      inputSchema: {
         type: 'object',
         properties: {
           workingDirectory: {
@@ -134,10 +150,13 @@ export class MCPServer {
         try {
           const { workingDirectory = '' } = params;
           const result = await this.repoTools.analyzeRepository(workingDirectory);
-          return { result };
+          return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
         } catch (error) {
           console.error('Erro em analyzeRepository:', error);
-          return { error: error.message || 'Erro ao analisar repositório' };
+          return { 
+            content: [{ type: 'text', text: `Erro ao analisar repositório: ${error.message}` }],
+            isError: true
+          };
         }
       }
     });
@@ -147,7 +166,7 @@ export class MCPServer {
     this.server.registerTool({
       name: 'generateContinuityPrompt',
       description: 'Gera um prompt otimizado para continuar o desenvolvimento na próxima sessão',
-      parameters: {
+      inputSchema: {
         type: 'object',
         properties: {
           projectPath: {
@@ -161,10 +180,13 @@ export class MCPServer {
           const { projectPath = 'project-status.json' } = params;
           const state = await this.stateManager.loadProjectState(projectPath);
           const prompt = this.stateManager.generateContinuityPrompt(state);
-          return { prompt };
+          return { content: [{ type: 'text', text: prompt }] };
         } catch (error) {
           console.error('Erro em generateContinuityPrompt:', error);
-          return { error: error.message || 'Erro ao gerar prompt de continuidade' };
+          return { 
+            content: [{ type: 'text', text: `Erro ao gerar prompt de continuidade: ${error.message}` }],
+            isError: true
+          };
         }
       }
     });
@@ -172,13 +194,13 @@ export class MCPServer {
 
   async start() {
     console.log('Iniciando servidor MCP...');
-    await this.server.start();
+    await this.server.connect();
     console.log('Servidor MCP iniciado com sucesso!');
   }
 
   async stop() {
     console.log('Parando servidor MCP...');
-    await this.server.stop();
+    await this.server.disconnect();
     console.log('Servidor MCP parado com sucesso!');
   }
 }
