@@ -70,9 +70,34 @@ Gera um prompt otimizado para continuar o desenvolvimento na próxima sessão.
 }
 ```
 
-## Instalação e Configuração
+## Instalação Fácil (Recomendado)
 
-Para usar o MCP Continuity Server, você pode adicioná-lo através do [PulseMCP](https://www.pulsemcp.com/servers) ou executá-lo localmente:
+A maneira mais simples de usar o MCP Continuity Server é instalá-lo usando o MCP Installer:
+
+1. Primeiro, instale o MCP Installer adicionando o seguinte ao seu arquivo `claude_desktop_config.json`:
+
+```json
+"mcpServers": {
+  "mcp-installer": {
+    "command": "npx",
+    "args": [
+      "@anaisbetts/mcp-installer"
+    ]
+  }
+}
+```
+
+2. Inicie o Claude Desktop e peça ao Claude que instale o MCP Continuity Server:
+
+```
+Claude, por favor instale o servidor MCP chamado @lucasdoreac/mcp-continuity-server
+```
+
+3. Reinicie o Claude Desktop, e o servidor estará pronto para uso!
+
+## Instalação Manual
+
+Para instalação manual, você pode:
 
 1. Clone este repositório:
    ```
