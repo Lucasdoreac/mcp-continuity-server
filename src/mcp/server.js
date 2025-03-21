@@ -1,5 +1,6 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { ListToolsRequestSchema, CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { StateManager } from '../services/stateManager.js';
 import { AutoSetup } from '../services/autoSetup.js';
 import { RepositoryTools } from '../services/repositoryTools.js';
@@ -24,16 +25,13 @@ export class MCPServer {
     this.autoSetup = new AutoSetup();
     this.repoTools = new RepositoryTools();
 
-    // Transporte para comunicação MCP
-    this.transport = new StdioServerTransport();
-
-    // Registra os handlers das ferramentas MCP
-    this.registerToolHandlers();
+    // Configurar os manipuladores usando schemas oficiais
+    this.registerHandlers();
   }
 
-  registerToolHandlers() {
-    // Configura o manipulador de lista de ferramentas
-    this.server.setRequestHandler({ method: 'tools/list' }, async () => {
+  registerHandlers() {
+    // Registra o manipulador de lista de ferramentas
+    this.server.setRequestHandler(ListToolsRequestSchema, async () => {
       return {
         tools: [
           {
@@ -115,8 +113,8 @@ export class MCPServer {
       };
     });
 
-    // Configura o manipulador de chamada de ferramentas
-    this.server.setRequestHandler({ method: 'tools/call' }, async (request) => {
+    // Registra o manipulador de chamada de ferramentas
+    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
       try {
         const toolName = request.params.name;
         const args = request.params.arguments || {};
@@ -232,7 +230,11 @@ export class MCPServer {
   async start() {
     // Usando console.error para evitar interferir com o transporte MCP
     console.error('Iniciando servidor MCP...');
-    await this.server.connect(this.transport);
+    
+    // Cria e conecta o transporte padrão (stdio)
+    const transport = new StdioServerTransport();
+    await this.server.connect(transport);
+    
     console.error('Servidor MCP iniciado com sucesso!');
   }
 
