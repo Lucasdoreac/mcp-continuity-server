@@ -11,7 +11,7 @@ export class MCPServer {
     this.server = new Server(
       {
         name: 'MCP Continuity Server',
-        version: '1.0.0',
+        version: '1.0.5',
       },
       {
         capabilities: {
@@ -143,6 +143,34 @@ export class MCPServer {
           isError: true
         };
       }
+    });
+    
+    // Adicionar handler para resources/list
+    this.server.setRequestHandler({ method: "resources/list" }, async () => {
+      return {
+        resources: [
+          {
+            id: "project-state-template",
+            name: "Template de Estado de Projeto",
+            description: "Template JSON para inicialização de estado de projeto",
+            contentType: "application/json"
+          }
+        ]
+      };
+    });
+
+    // Adicionar handler para prompts/list
+    this.server.setRequestHandler({ method: "prompts/list" }, async () => {
+      return {
+        prompts: [
+          {
+            id: "continuity-prompt",
+            name: "Prompt de Continuidade",
+            description: "Prompt para usar nas próximas sessões para manter continuidade",
+            template: "Use MCP Continuity Server para gerenciar o projeto {repositoryUrl}. Status: {projectStatus}"
+          }
+        ]
+      };
     });
   }
 
